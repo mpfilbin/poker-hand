@@ -19,39 +19,42 @@ High Card: Any five cards not matching the above
 =end
 
 
-  def initialize(hand_as_string)
-    @cards = build_hand(hand_as_string)
-    raise "#{hand_as_string} must have five cards" unless @cards.size == 5
+  def initialize(cards)
+    @cards = cards
   end
 
   def to_s
-    @cards.collect() {|card| card.to_s}.join(' ')
+    @cards.collect() { |card| card.to_s }.join(' ')
   end
 
+  def valid?
+    @cards.length == 5
+  end
 
-  def sequence!
-    group_suits
+  def order!
     order_by_rank
   end
 
-  def all_same_suit
-    @cards.all? {|card| card.suit == @cards.first.suit}
+  def high_card
+    order_by_rank[0]
   end
+
+
+  def all_same_suit?
+    @cards.all? { |card| card.suit == @cards.first.suit }
+  end
+
+  def ranks
+    @cards.map { |card| card.rank }
+  end
+
+
 
 
   private
 
-  def build_hand(hand_as_string)
-    cards = hand_as_string.split(' ')
-    cards.map{|card| Card.new(card)}
-  end
-
   def order_by_rank
-    @cards.sort!
-  end
-
-  def group_suits
-    @cards.group_by {|card| card.suit}.to_a
+    @cards.sort!.reverse!
   end
 
 end

@@ -3,24 +3,23 @@ class Card
 
   # rank: A > K > Q > J > 10 .. 2
 
-  RANK_PATTERN = /^([0-9]{0,2}|[jkqa])\w$/
-  SUIT_PATTERN =/^*?([hdsc]{1})$/
-  NON_NUMERICS = %w( a k q j )
-
-  VALID_RANKS = [*2..10].concat(NON_NUMERICS)
+  VALID_NON_NUMERIC_RANKS = %i( ace king queen jack )
+  VALID_SUITS = %i( clubs spades diamonds hearts )
 
   attr_reader :suit, :rank
 
-  def initialize(representation)
-    parse(representation)
+  def initialize(rank, suit)
+    set_rank(rank)
+    set_suit(suit)
   end
 
   def to_s
-    "#{rank.to_s.upcase}#{suit}"
-  end
-
-  def numeric?
-    rank.is_a? Numeric
+    if rank.is_a? Numeric
+      ranks_string = rank.to_s
+    else
+      ranks_string = rank.to_s[0].upcase
+    end
+    "#{ranks_string}#{suit.to_s[0]}"
   end
 
   def <=> (other)
@@ -36,28 +35,35 @@ class Card
     elsif !other.numeric? and self.numeric?
       int = -1
     else
-      int = NON_NUMERICS.find_index {|rank| rank == other.rank} <=> NON_NUMERICS.find_index {|rank| rank == self.rank}
+      int = VALID_NON_NUMERIC_RANKS.find_index { |rank| rank == other.rank } <=> VALID_NON_NUMERIC_RANKS.find_index { |rank| rank == self.rank }
     end
     int
   end
 
+  protected
+
+  def numeric?
+    rank.is_a? Numeric
+  end
+
+
   private
 
-  def parse(representation)
-    raise ArgumentError, "#{representation} must be a string" unless representation.is_a? String
-    @suit = get_suit(representation)
-    @rank = get_rank(representation)
+  def set_rank(rank)
+    if rank.is_a? Numeric
+      raise "#{rank} is an invalid rank" unless (2..10).include? rank
+    elsif rank.is_a? Symbol
+      raise "#{rank} is an invalid rank" unless VALID_NON_NUMERIC_RANKS.include? rank
+    else
+      raise ArgumentError, 'rank must be either a Numeric or Symbolic value'
+    end
+    @rank = rank
   end
 
-  def get_rank(representation)
-    match = RANK_PATTERN.match(representation.downcase)
-    raise "#{representation} does not have a valid rank" if match.nil? or !VALID_RANKS.any? { |rank| rank.to_s == match[1] }
-    match[1].to_i > 0 ? match[1].to_i : match[1]
+
+  def set_suit(suit)
+    raise "#{suit} is not a valid suit" unless suit.is_a? Symbol and VALID_SUITS.include? suit
+    @suit = suit
   end
 
-  def get_suit(representation)
-    match = SUIT_PATTERN.match(representation.downcase)
-    raise "#{representation} does not have a valid suit" if match.nil?
-    match
-  end
 end
