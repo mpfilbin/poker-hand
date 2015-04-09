@@ -6,7 +6,7 @@ if ARGV.length < 5
   Determines the strength of a given poker hand
 
   Usage:
-    hand As Ad Ah 10c 10h => "As Ad Ah 10c 10h Full House"
+    hand As Ad Ah 10c 10h => "As Ad Ah 10c 10h - Full House"
   EOF
 end
 

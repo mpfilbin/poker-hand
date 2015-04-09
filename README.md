@@ -2,21 +2,20 @@
 
 This project is a proof-of-concept. This application takes a given poker hand and evaluates its rank.
 
-
 ### Installation
 
-This project was implemented in Ruby and uses newer syntax introduced in Version 1.9, so please make sure you have a recent version of Ruby installed before running this project.
+This project was implemented in Ruby and uses newer syntax introduced in Version 1.9, so please make sure you have a recent version of Ruby installed before using the CLI or running the test suite.
 
 #### Dependencies
 
 This project also uses [Bundler](http://bundler.io) to manage dependencies.
-If you do not have bundler installed, you can do so from the shell with `gem install bundler`
+If you do not have Bundler installed, you can do so from the shell with `gem install bundler`
 
-Finally, install all of the project dependencies with: `bundle`
+Finally, install all of the project dependencies by issuing the `bundle` command in the shell from the root of the repository.
 
 ### Commandline Usage
 
-The CLI for this project is "hand". Simply make the file executable (`chmod +x hand`)
+The CLI for this project is a simple shell script. Simply make the file executable (`chmod +x hand`)
 
 ```shell
 Example:
