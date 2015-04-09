@@ -1,5 +1,4 @@
-require 'minitest/spec'
-require 'minitest/autorun'
+require_relative 'spec_helper'
 
 require_relative '../card.rb'
 
@@ -118,6 +117,75 @@ describe 'Playing Card' do
       "#{Card.new(:jack, :clubs)}".must_equal 'Jc'
     end
   end
+
+  describe 'numericality' do
+
+    describe '10h' do
+      it 'is numeric' do
+        Card.new(10, :hearts).numeric?.must_equal true
+      end
+    end
+
+    describe 'As' do
+      it 'is not numeric' do
+        Card.new(:ace, :spades).numeric?.must_equal false
+      end
+    end
+
+  end
+
+  describe 'string parsing' do
+    describe 'As' do
+      before(:all) do
+        @card = Card.parse('As')
+      end
+      it 'parses to Ace of Spades' do
+        (@card == Card.new(:ace, :spades)).must_equal true
+      end
+
+      it 'does not parse to King of Diamonds' do
+        (@card == Card.new(:king, :diamonds)).must_equal false
+      end
+
+    end
+
+    describe '10h' do
+      before(:all) do
+        @card = Card.parse('10h')
+      end
+      it 'parses to 10 of Hearts' do
+        (@card == Card.new(10, :hearts)).must_equal true
+      end
+
+      it 'does not parse to 2 of Clubs' do
+        (@card == Card.new(2, :clubs)).must_equal false
+      end
+
+    end
+  end
+
+  describe 'ranking' do
+    describe 'Qh' do
+      before(:all) do
+        @card = Card.parse('Qh')
+      end
+
+      it 'follows Kd' do
+        @card.follows?(Card.parse('Kd')).must_equal true
+      end
+
+      it 'does not follow Ah' do
+        @card.follows?(Card.parse('Ah')).must_equal false
+      end
+
+      it 'does not follow Js' do
+        @card.follows?(Card.parse('Js')).must_equal false
+      end
+
+    end
+
+  end
+
 
 end
 

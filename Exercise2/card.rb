@@ -5,6 +5,7 @@ class Card
 
   VALID_NON_NUMERIC_RANKS = %i( ace king queen jack )
   VALID_SUITS = %i( clubs spades diamonds hearts )
+  CARD_PATTERN = /^([0-9]{1,2}|[akqj])([csdh])$/i
 
   attr_reader :suit, :rank
 
@@ -40,14 +41,29 @@ class Card
     int
   end
 
-  protected
-
   def numeric?
     rank.is_a? Numeric
   end
 
+  def follows?(card)
+    relative_rank(self) == relative_rank(card) + 1
+  end
+
+  # Public Statics
+
+  def self.parse(string)
+    matches = CARD_PATTERN.match(string)
+    if matches.length > 2
+      Card.new(parse_rank(matches[1]), find_suit(matches[2]))
+    end
+  end
 
   private
+
+  def relative_rank(card)
+    rankings = VALID_NON_NUMERIC_RANKS.to_a.concat((2..10).to_a.reverse)
+    rankings.find_index { |rank| card.rank == rank }
+  end
 
   def set_rank(rank)
     if rank.is_a? Numeric
@@ -60,10 +76,23 @@ class Card
     @rank = rank
   end
 
-
   def set_suit(suit)
     raise "#{suit} is not a valid suit" unless suit.is_a? Symbol and VALID_SUITS.include? suit
     @suit = suit
+  end
+
+
+  # Private statics
+  def self.find_suit(suit_string)
+    VALID_SUITS.detect { |suit| suit.to_s[0] == suit_string }
+  end
+
+  def self.parse_rank(rank_string)
+    if rank_string =~ /^\d+$/
+      rank_string.to_i
+    else
+      VALID_NON_NUMERIC_RANKS.detect { |rank| rank.to_s[0] == rank_string.downcase }
+    end
   end
 
 end
